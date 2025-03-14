@@ -1,0 +1,200 @@
+<!--CSS Code--> 
+<style>
+    #slide-container {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        width: 100%;
+        height: auto;
+    }
+    
+    #slide-bar {
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .slide-bar-item {
+        width: 100px;
+        height: 4px;
+        background-color: red;
+    }
+
+    .slide-bar-item-active {
+        background-color: green;
+    }
+
+    #slide-content {
+        overflow-x: hidden;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        margin-top: 100px;
+    }
+
+    .content {
+        display: none;
+        position: relative;
+        width: 80%;
+        min-height: 100px;
+    }
+
+    .slide-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background-color: #151517;
+        border-radius: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        z-index: 1000;
+    }
+
+    .arrow-symbol {
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+    }
+
+    /* Arrows position */
+    #slide-left {
+        left: 20px;
+    }
+    
+    #slide-right {
+        right: 20px;
+    }
+
+    /* Animations */
+    @keyframes slideLeft {
+        0% {
+            left: 100%; 
+        }
+        100% {
+            left: 0; 
+        }
+    }
+
+    @keyframes slideRight {
+        0% {
+            right: 100%; 
+        }
+        100% {
+            right: 0; 
+        }
+    }
+</style>
+
+
+<!--HTML Code-->
+<div id="slide-container">
+    <div id="slide-bar"></div>
+
+    <div id="slide-content">
+        <div onclick="change(false)" class="slide-arrow" id="slide-left"><p class="arrow-symbol"><</p></div>
+        <div onclick="change(true)" class="slide-arrow" id="slide-right"><p class="arrow-symbol">></p></div>
+
+        <!-- Items (div) to slide.
+            EXAMPLE:
+            <div class="content"></div> 
+            <div class="content"></div> 
+            <div class="content"></div> 
+        -->
+    </div>
+</div>
+
+
+<!--JAVASCRIPT Code-->
+<script>
+    var id = 0
+
+    /**
+     * @description Changes the slide
+     * @param {boolean} right Sets the slide direction
+     * @return {void}
+    */
+    function change(right) {
+        const content = document.getElementsByClassName("content")
+
+        id += right ? 1 : -1
+        id = id < 0 ? content.length - 1 : id
+        id = id >= content.length ? 0 : id
+        
+        setAllDisplayNone()
+
+        if (right) {
+            content[id].style.left = "100%"
+            content[id].style.right = ""
+            content[id].style.animation = ""
+            content[id].style.animation = "slideLeft 0.5s ease-out forwards" 
+        } else {
+            content[id].style.left = "" 
+            content[id].style.right = "100%" 
+            content[id].style.animation = "" 
+            content[id].style.animation = "slideRight 0.5s ease-out forwards" 
+        }
+        
+        
+        content[id].style.display = "block"
+        createBar(content.length, id)
+    }
+
+    /**
+     * @description Sets all content display to none / hidden
+     * @return {void}
+    */
+    function setAllDisplayNone() {
+        const content = document.getElementsByClassName("content")
+        for (let i = 0; i < content.length; i++) {
+            content[i].style.display = "none"
+        }
+    }
+
+    /**
+     * @description Creates the indicator bar
+     * @param {number} contentLength Total number of content
+     * @param {number} current Current content on display
+     * @return {void}
+    */
+    function createBar(contentLength, current) {
+        const bar = document.getElementById("slide-bar")
+
+        while (bar.firstChild) {
+            bar.removeChild(bar.firstChild)
+        }
+
+        for (let i = 0; i < contentLength; i++) {
+            const div = document.createElement("div")
+            div.classList.add("slide-bar-item")
+            div.id = "slide-bar-item-" + i
+            bar.appendChild(div)
+        }
+
+        const item = document.getElementById("slide-bar-item-" + current)
+        item.classList.add("slide-bar-item-active")
+    }
+
+    /**
+     * @description Starts the slide. Must be called when the page loads.
+     * @return {void}
+    */
+    function start(){
+        const content = document.getElementsByClassName("content")
+        createBar(content.length, 0)
+        content[0].style.display = "block"
+        id = 0
+    }
+
+    start()
+</script>

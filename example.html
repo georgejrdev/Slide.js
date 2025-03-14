@@ -1,0 +1,176 @@
+<style>
+    #slide-container {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        width: 100%;
+        height: auto;
+    }
+    
+    #slide-bar {
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .slide-bar-item {
+        width: 100px;
+        height: 4px;
+        background-color: red;
+    }
+
+    .slide-bar-item-active {
+        background-color: green;
+    }
+
+    #slide-content {
+        overflow-x: hidden;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        margin-top: 100px;
+    }
+
+    .content {
+        display: none;
+        position: relative;
+        width: 80%;
+        min-height: 100px;
+    }
+
+    .slide-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background-color: #151517;
+        border-radius: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        z-index: 1000;
+    }
+
+    .arrow-symbol {
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+    }
+
+    #slide-left {
+        left: 20px;
+    }
+    
+    #slide-right {
+        right: 20px;
+    }
+
+    @keyframes slideLeft {
+        0% {
+            left: 100%; 
+        }
+        100% {
+            left: 0; 
+        }
+    }
+
+    @keyframes slideRight {
+        0% {
+            right: 100%; 
+        }
+        100% {
+            right: 0; 
+        }
+    }
+</style>
+
+<div id="slide-container">
+
+    <a target="_blank" rel="noopener noreferrer" style="text-align: center;display:block;" href="https://github.com/georgejrdev/Slide.js/blob/main/example.html" style="text-align: center;">View example code</a>
+    <a target="_blank" rel="noopener noreferrer" style="text-align: center;display:block;margin-bottom:100px;" href="https://github.com/georgejrdev/Slide.js" style="text-align: center;">View the documentation</a>
+
+    <div id="slide-bar"></div>
+
+    <div id="slide-content">
+        <div onclick="change(false)" class="slide-arrow" id="slide-left"><p class="arrow-symbol"><</p></div>
+        <div onclick="change(true)" class="slide-arrow" id="slide-right"><p class="arrow-symbol">></p></div>
+
+        <div style="background-color: rgb(255, 232, 232);" class="content"></div>
+        <div style="background-color: rgb(136, 125, 199);" class="content"></div>
+        <div style="background-color: rgb(14, 255, 94);" class="content"></div>
+        <div style="background-color: rgb(252, 28, 159);" class="content"></div>
+    </div>
+</div>
+
+<script>
+    var id = 0
+
+    function change(right) {
+        const content = document.getElementsByClassName("content")
+
+        id += right ? 1 : -1
+        id = id < 0 ? content.length - 1 : id
+        id = id >= content.length ? 0 : id
+        
+        setAllDisplayNone()
+
+        if (right) {
+            content[id].style.left = "100%"
+            content[id].style.right = ""
+            content[id].style.animation = ""
+            content[id].style.animation = "slideLeft 0.5s ease-out forwards" 
+        } else {
+            content[id].style.left = "" 
+            content[id].style.right = "100%" 
+            content[id].style.animation = "" 
+            content[id].style.animation = "slideRight 0.5s ease-out forwards" 
+        }
+        
+        
+        content[id].style.display = "block"
+        createBar(content.length, id)
+    }
+
+    function setAllDisplayNone() {
+        const content = document.getElementsByClassName("content")
+        for (let i = 0; i < content.length; i++) {
+            content[i].style.display = "none"
+        }
+    }
+
+    function createBar(contentLength, current) {
+        const bar = document.getElementById("slide-bar")
+
+        while (bar.firstChild) {
+            bar.removeChild(bar.firstChild)
+        }
+
+        for (let i = 0; i < contentLength; i++) {
+            const div = document.createElement("div")
+            div.classList.add("slide-bar-item")
+            div.id = "slide-bar-item-" + i
+            bar.appendChild(div)
+        }
+
+        const item = document.getElementById("slide-bar-item-" + current)
+        item.classList.add("slide-bar-item-active")
+    }
+
+    function start(){
+        const content = document.getElementsByClassName("content")
+        createBar(content.length, 0)
+        content[0].style.display = "block"
+        id = 0
+    }
+
+    start()
+</script>
